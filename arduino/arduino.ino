@@ -18,6 +18,13 @@ void setup() {
 }
 
 void loop() {
+
+  //Conversion of value
+  //Temperature
+  temp = map(temp, 0, 1023, -15, 50);
+  //Humidity
+  hum = map(hum, 0, 1023, 0, 100);
+  
   Serial.print(analogRead(light));
   Serial.print(",");
   Serial.print(analogRead(temp));
