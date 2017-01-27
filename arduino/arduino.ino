@@ -11,6 +11,7 @@ const int light = A0;  // Analog input pin that the light sensor is plugged
 const int temp = A1;  // Analog input pin that the potentiometer simulates temperature sensor
 const int humid = A2;  // Analog input pin that the potentiometer simulates humidity sensor
 
+const int SERIAL = 123456787;
 
 void setup() {
   // initialize serial communications at 9600 bps:
