@@ -58,13 +58,13 @@ function getAssociation(id){
 }
 
 function createAssociation(id, password, serialNumber){
-
 }
 
 //measure structure : {serial, timestamp, light, temperature, humidity}
 function saveMeasure(measure){
 	console.log(measure);
 }
+
 
 /*
 
