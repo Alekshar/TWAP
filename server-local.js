@@ -7,6 +7,13 @@ var serialport = require('serialport'),
 	readline = require('readline'),
 	rl = readline.createInterface(process.stdin, process.stdout);
 
+var nodeRSA = require('node-rsa');
+var fileKey = fs.readFileSync("public.pem", "UTF-8");
+var publicKey = nodeRSA();
+publicKey.importKey(fileKey);
+
+//To encrypt the message, we just have to do : publicKey.encrypt('An awesome message', Base64);
+
 /*/
 setInterval(function(){
 	parseAndSend(randomBetween(0,255)+","+randomBetween(0,255)+","+randomBetween(0,255));
