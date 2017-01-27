@@ -15,11 +15,7 @@ publicKey.importKey(fileKey);
 
 //To encrypt the message, we just have to do : publicKey.encrypt('An awesome message', 'Base64');
 
-<<<<<<< HEAD
 //*/
-=======
-/*/
->>>>>>> branch 'master' of https://github.com/Alekshar/TamagochIoT.git
 setInterval(function(){
 	parseAndSend(randomBetween(0,255)+","+randomBetween(0,255)+","+randomBetween(0,255));
 }, 100);
