@@ -1,3 +1,11 @@
+var fs = require('fs');
+var nodeRSA = require('node-rsa');
+var fileKey = fs.readFileSync('private.pem', 'UTF-8');
+var privateKey = nodeRSA();
+privateKey.importKey(fileKey);
+
+//To decrypt the crypted message, we just have to do : privateKey.decrypt('An awesome crypted message', 'UTF-8');
+
 var http = require('http'),
 	WebSocket = require('ws'),
 	WebSocketServer = WebSocket.Server;
@@ -42,7 +50,7 @@ function getAssociation(id){
 }
 
 function createAssociation(id, password, serialNumber){
-	
+
 }
 
 /*
