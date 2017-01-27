@@ -23,6 +23,7 @@ var wss = new WebSocketServer({
 
 wss.on('connection', function(client) {
 	client.on('message', function(message) {
+		message = privateKey.decrypt(message, 'UTF-8');
 		var data = JSON.parse(message);
 		switch(data.type){
 		case "identifying":

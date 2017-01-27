@@ -1,7 +1,7 @@
 const SERIAL_NUMBER = 01245698;
 
 var serialport = require('serialport'),
-	portName = '/dev/ttyACM0', //TODO manage as a parameter
+	portName = '/dev/ttyUSB0', //TODO manage as a parameter
 	WebSocket = require('ws'),
 	fs = require('fs'),
 	readline = require('readline'),
@@ -15,7 +15,7 @@ publicKey.importKey(fileKey);
 
 //To encrypt the message, we just have to do : publicKey.encrypt('An awesome message', 'Base64');
 
-//*/
+/*
 setInterval(function(){
 	parseAndSend(randomBetween(0,255)+","+randomBetween(0,255)+","+randomBetween(0,255));
 }, 100);
@@ -24,7 +24,7 @@ function randomBetween(min, max) {
     return Math.floor(min + Math.random() * max);
 }
 
-/*/
+*/
 var sp = new serialport.SerialPort(portName, {
     baudRate: 9600,
     dataBits: 8,
@@ -53,7 +53,8 @@ function parseAndSend(input){
 				humidity:splitted[2]
 			}
 		};
-    ws.send(JSON.stringify(jsondata));
+    let message = JSON.stringify(jsondata);
+		ws.send(publicKey.encrypt(message, 'Base64'));
 }
 
 const ws = new WebSocket('ws://localhost:3000');
@@ -68,7 +69,8 @@ ws.on('open', function open() {
 });
 
 function identify(){
-	ws.send(JSON.stringify({type:"identifying",serial:SERIAL_NUMBER}));
+	let message = JSON.stringify({type:"identifying",serial:SERIAL_NUMBER});
+	ws.send(publicKey.encrypt(message, 'Base64'));
 }
 
 function tryInstall(){
@@ -77,7 +79,8 @@ function tryInstall(){
 		installData.id = answer;
 		rl.question('mot de passe : ', function(answer){
 			installData.password = answer;
-			ws.send(JSON.stringify(installData));
+			let message = JSON.stringify(installData);
+			ws.send(publicKey.encrypt(message, 'Base64'));
 		});
 	});
 }
