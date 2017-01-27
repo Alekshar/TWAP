@@ -1,3 +1,11 @@
+var fs = require('fs');
+var nodeRSA = require('node-rsa');
+var fileKey = fs.readFileSync('private.pem', 'UTF-8');
+var privateKey = nodeRSA();
+privateKey.importKey(fileKey);
+
+//To decrypt the crypted message, we just have to do : privateKey.decrypt('An awesome crypted message', 'UTF-8');
+
 var http = require('http'),
 	WebSocket = require('ws'),
 	WebSocketServer = WebSocket.Server;
@@ -17,6 +25,14 @@ wss.on('connection', function(client) {
 	client.on('message', function(message) {
 		var data = JSON.parse(message);
 		switch(data.type){
+		case "identifying":
+			client.serialNumber = data.serial;
+			client.send(JSON.stringify({type:"identified"}));
+			break;
+		case "measure":
+			data.measure.serial = client.serialNumber;
+			saveMeasure(data.measure);
+			break;
 		case "associating":
 			var assoc = getAssociation(data.id);
 			if(assoc === null){
@@ -42,7 +58,12 @@ function getAssociation(id){
 }
 
 function createAssociation(id, password, serialNumber){
-	
+
+}
+
+//measure structure : {serial, timestamp, light, temperature, humidity}
+function saveMeasure(measure){
+	console.log(measure);
 }
 
 /*
