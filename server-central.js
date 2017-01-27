@@ -14,12 +14,36 @@ var wss = new WebSocketServer({
 
 
 wss.on('connection', function(client) {
-	console.log('connected');
 	client.on('message', function(message) {
-		console.log(message);
+		var data = JSON.parse(message);
+		switch(data.type){
+		case "associating":
+			var assoc = getAssociation(data.id);
+			if(assoc === null){
+				createAssociation(data.id, data.password, data.serial);
+				client.send(JSON.stringify({type:"associationConfirmed"}));
+			} else {
+				client.send(JSON.stringify({type:"associationRefused",reason:"Identifiant déjà utilisé"}));
+			}
+			break;
+		default:
+			console.log("unmanaged action");
+		}
 	});
 });
 
+
+//Database methods
+function getAssociation(id){
+	if(id === "test"){
+		return {id:"test"};
+	}
+	return null;
+}
+
+function createAssociation(id, password, serialNumber){
+	
+}
 
 /*
 
