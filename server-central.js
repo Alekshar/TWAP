@@ -41,27 +41,45 @@ wss.on('connection', function(client) {
 	            client.send(JSON.stringify({type:"identified"}));
 			}
 			break;
-		case "measure":
+		case "measure": //gérer broadcast clients (currentValue)
 			data.measure.serial = client.serialNumber;
 			saveMeasure(data.measure);
 			break;
 		case "associating":
 			var assoc = getAssociation(data.user);
 			if(assoc === null){
-				createAssociation(data.user, data.password, data.serial);
+			    delete data.type;
+				createAssociation(data);
 				client.send(JSON.stringify({type:"associationConfirmed"}));
 			} else {
 				client.send(JSON.stringify({type:"associationRefused",reason:"Identifiant déjà utilisé"}));
 			}
 			break;
+		case "history"://{date} -> oldValue
+		    var measure = getMeasureAtTime(data.date);
+		    client.send(JSON.stringify({type:"oldValue",measure:measure}));
+		    break;
+		case "login"://{user,password} -> {type:"loginConfirmed"}, "loginRefused"
+		    var assoc = getAssociation(data.user);
+		    if(assoc === null){
+                client.send(JSON.stringify({type:"loginRefused"}));
+            } else {
+                if(assoc.password == data.password){
+                    client.userSerial = assoc.serial;
+                    client.send(JSON.stringify({type:"loginConfirmed"}));
+                } else {
+                    client.send(JSON.stringify({type:"loginRefused"}));
+                }
+            }
+		    break;
 		default:
-			console.log("unmanaged action");
+			console.log("unmanaged action "+data.type);
 		}
 	});
 });
 
 function getAssociationForSerial(serial){
-    return {user:"test"};
+    return null;
 }
 
 //Database methods
@@ -72,8 +90,8 @@ function getAssociation(user){
   return null;
 }
 
-
-function getSchemaWhereTimeIS(timeDate){ // a verifier
+//TODO besoin de prendre la prochaine mesure la plus proche de cette date
+function getMeasureAtTime(timeDate){ // a verifier
   return mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
                           if (err) { throw err; }
                               else {
@@ -84,7 +102,7 @@ function getSchemaWhereTimeIS(timeDate){ // a verifier
                       });
 }
 
-function createAssociation(user, password, serialNumber){
+function createAssociation(data){
   //creation du lien entre le id et
 }
 
@@ -104,7 +122,7 @@ premier lancement
 usage
 	envoie timestamp data et numsérie
 	
-	
+	currentValue oldValue
 gestion mémoire 
 x dernières périodes de 1 minute enregistrées
     => utilisation d'un marqueur temps perso
