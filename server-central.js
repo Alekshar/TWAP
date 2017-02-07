@@ -20,7 +20,15 @@ var wss = new WebSocketServer({
 	server: server
 });
 
+//Connexion a à la base de données
+//creer le schmea association
+/*
+var db = 'mongodb://mongodb:27017/Arduino';
+var mongoose   =  require("mongoose");
+var connection = mongoose.connect(db);
+let Sensor = require("./model/Sensor");
 
+*/
 wss.on('connection', function(client) {
 	client.on('message', function(message) {
 		message = privateKey.decrypt(message, 'UTF-8');
@@ -58,11 +66,26 @@ function getAssociation(id){
 	return null;
 }
 
+
+function getSchemaWhereTimeIS(timeDate){ // a verifier
+	return mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
+  							if (err) { throw err; }
+								else {
+											// comms est un tableau de hash
+											console.log(data);
+											return data[0];
+										}
+						});
+}
+
 function createAssociation(id, password, serialNumber){
+	//creation du lien entre le id et
 }
 
 //measure structure : {serial, timestamp, light, temperature, humidity}
 function saveMeasure(measure){
+	const sensor = new Sensor(measure);
+	sensor.save();
 	console.log(measure);
 }
 
