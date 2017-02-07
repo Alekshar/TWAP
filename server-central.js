@@ -22,13 +22,14 @@ var wss = new WebSocketServer({
 
 //Connexion a à la base de données
 //creer le schmea association
-/*
-var db = 'mongodb://mongodb:27017/Arduino';
+
+var db = 'mongodb://localhost:27017/Arduino';
 var mongoose   =  require("mongoose");
 var connection = mongoose.connect(db);
-let Sensor = require("./model/Sensor");
+let Sensor = require("./modele/sensors");
+let Association = require("./modele/association");
 
-*/
+
 wss.on('connection', function(client) {
 	client.on('message', function(message) {
 		message = privateKey.decrypt(message, 'UTF-8');
@@ -59,27 +60,33 @@ wss.on('connection', function(client) {
 
 
 //Database methods
+
 function getAssociation(user){
-  if(id === "test"){
-      return {id:"test"};
-  }
-  return null;
+	return mongoose.model('Association').find({"user": user}, (err, data) =>{
+																			if (err) { throw err; }
+																					else {
+																								console.log(data);
+																								return data[0];
+																								}
+																			});
 }
 
 
 function getSchemaWhereTimeIS(timeDate){ // a verifier
   return mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
-                          if (err) { throw err; }
-                              else {
-                                          // comms est un tableau de hash
-                                          console.log(data);
-                                          return data[0];
-                                      }
-                      });
+				                           if (err) { throw err; }
+				                              else {
+				                                    console.log(data);
+				                                    return data[0];
+				                                    }
+                      						});
 }
 
 function createAssociation(user, password, serialNumber){
-  //creation du lien entre le id et
+  //creation du lien entre le id e
+	const association = new Association();
+  sensor.save();
+  console.log(measure);
 }
 
 //measure structure : {serial, timestamp, light, temperature, humidity}
@@ -97,11 +104,11 @@ premier lancement
 	check id utilisable et assocaition numsérie id <-central
 usage
 	envoie timestamp data et numsérie
-	
-	
-gestion mémoire 
+
+
+gestion mémoire
 x dernières périodes de 1 minute enregistrées
     => utilisation d'un marqueur temps perso
-    
+
 
 */

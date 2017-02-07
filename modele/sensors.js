@@ -5,11 +5,12 @@ var mongoSchema =   mongoose.Schema;
 // create schema
 var sensorSchema  = new mongoSchema (
   {
-    "serial": Number,
+    "serial": string,
     "timestamp": Date,
     "light": Number,
     "temperature": Number ,
     "humidity": Number
+  }
 );
 
 // create model if not exists.
