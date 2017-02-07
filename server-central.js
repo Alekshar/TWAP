@@ -35,9 +35,9 @@ wss.on('connection', function(client) {
 			saveMeasure(data.measure);
 			break;
 		case "associating":
-			var assoc = getAssociation(data.id);
+			var assoc = getAssociation(data.user);
 			if(assoc === null){
-				createAssociation(data.id, data.password, data.serial);
+				createAssociation(data.user, data.password, data.serial);
 				client.send(JSON.stringify({type:"associationConfirmed"}));
 			} else {
 				client.send(JSON.stringify({type:"associationRefused",reason:"Identifiant déjà utilisé"}));
@@ -51,14 +51,14 @@ wss.on('connection', function(client) {
 
 
 //Database methods
-function getAssociation(id){
+function getAssociation(user){
 	if(id === "test"){
 		return {id:"test"};
 	}
 	return null;
 }
 
-function createAssociation(id, password, serialNumber){
+function createAssociation(user, password, serialNumber){
 }
 
 //measure structure : {serial, timestamp, light, temperature, humidity}
@@ -74,5 +74,11 @@ premier lancement
 	check id utilisable et assocaition numsérie id <-central
 usage
 	envoie timestamp data et numsérie
+	
+	
+gestion mémoire 
+x dernières périodes de 1 minute enregistrées
+    => utilisation d'un marqueur temps perso
+    
 
 */
