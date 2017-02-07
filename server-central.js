@@ -60,18 +60,33 @@ wss.on('connection', function(client) {
 
 //Database methods
 function getAssociation(user){
-	if(id === "test"){
-		return {id:"test"};
-	}
-	return null;
+  if(id === "test"){
+      return {id:"test"};
+  }
+  return null;
+}
+
+
+function getSchemaWhereTimeIS(timeDate){ // a verifier
+  return mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
+                          if (err) { throw err; }
+                              else {
+                                          // comms est un tableau de hash
+                                          console.log(data);
+                                          return data[0];
+                                      }
+                      });
 }
 
 function createAssociation(user, password, serialNumber){
+  //creation du lien entre le id et
 }
 
 //measure structure : {serial, timestamp, light, temperature, humidity}
 function saveMeasure(measure){
-	console.log(measure);
+  const sensor = new Sensor(measure);
+  sensor.save();
+  console.log(measure);
 }
 
 
