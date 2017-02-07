@@ -22,13 +22,11 @@ var wss = new WebSocketServer({
 
 //Connexion a à la base de données
 //creer le schmea association
-/*
-var db = 'mongodb://mongodb:27017/Arduino';
+var db = 'mongodb://localhost:27017/Arduino';
 var mongoose   =  require("mongoose");
 var connection = mongoose.connect(db);
-let Sensor = require("./model/Sensor");
+let Sensor = require("./modele/sensors");
 
-*/
 wss.on('connection', function(client) {
 	client.on('message', function(message) {
 		message = privateKey.decrypt(message, 'UTF-8');
@@ -36,7 +34,12 @@ wss.on('connection', function(client) {
 		switch(data.type){
 		case "identifying":
 			client.serialNumber = data.serial;
-			client.send(JSON.stringify({type:"identified"}));
+			var assoc = getAssociationForSerial(data.serial);
+			if(assoc == null){
+	            client.send(JSON.stringify({type:"unknown"}));
+			} else {
+	            client.send(JSON.stringify({type:"identified"}));
+			}
 			break;
 		case "measure":
 			data.measure.serial = client.serialNumber;
@@ -57,11 +60,14 @@ wss.on('connection', function(client) {
 	});
 });
 
+function getAssociationForSerial(serial){
+    return {user:"test"};
+}
 
 //Database methods
 function getAssociation(user){
-  if(id === "test"){
-      return {id:"test"};
+  if(user === "test"){
+      return {user:"test"};
   }
   return null;
 }

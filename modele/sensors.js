@@ -10,6 +10,7 @@ var sensorSchema  = new mongoSchema (
     "light": Number,
     "temperature": Number ,
     "humidity": Number
+  }
 );
 
 // create model if not exists.
