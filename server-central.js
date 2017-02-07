@@ -22,14 +22,10 @@ var wss = new WebSocketServer({
 
 //Connexion a à la base de données
 //creer le schmea association
-
 var db = 'mongodb://localhost:27017/Arduino';
 var mongoose   =  require("mongoose");
 var connection = mongoose.connect(db);
 let Sensor = require("./modele/sensors");
-
-let Association = require("./modele/association");
-
 
 wss.on('connection', function(client) {
 	client.on('message', function(message) {
@@ -48,6 +44,12 @@ wss.on('connection', function(client) {
 		case "measure": //gérer broadcast clients (currentValue)
 			data.measure.serial = client.serialNumber;
 			saveMeasure(data.measure);
+			for(userClient of wss.clients) {
+			    if(typeof userClient.userSerial != "undefined"
+			        && userClient.userSerial == data.measure.serial){
+			        userClient.send(encrypt(JSON.stringify({type:"currentValue", measure:data.measure})));
+			    }
+			}
 			break;
 		case "associating":
 			var assoc = getAssociation(data.user);
@@ -61,18 +63,24 @@ wss.on('connection', function(client) {
 			break;
 		case "history"://{date} -> oldValue
 		    var measure = getMeasureAtTime(data.date);
-		    client.send(JSON.stringify({type:"oldValue",measure:measure}));
+		    client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure})));
 		    break;
 		case "login"://{user,password} -> {type:"loginConfirmed"}, "loginRefused"
 		    var assoc = getAssociation(data.user);
+		    if(data.user == "ok"){
+                client.userSerial = assoc.serial;
+                client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
+		    } else if(data.user == "fail"){
+                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+		    }
 		    if(assoc === null){
-                client.send(JSON.stringify({type:"loginRefused"}));
+                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
             } else {
                 if(assoc.password == data.password){
                     client.userSerial = assoc.serial;
-                    client.send(JSON.stringify({type:"loginConfirmed"}));
+                    client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
                 } else {
-                    client.send(JSON.stringify({type:"loginRefused"}));
+                    client.send(encrypt(JSON.stringify({type:"loginRefused"})));
                 }
             }
 		    break;
@@ -82,40 +90,36 @@ wss.on('connection', function(client) {
 	});
 });
 
+function encrypt(message){
+    
+}
+
 function getAssociationForSerial(serial){
-    return null;
+    return {user:"test"};
 }
 
 //Database methods
-
 function getAssociation(user){
-	return mongoose.model('Association').find({"user": user}, (err, data) =>{
-																			if (err) { throw err; }
-																					else {
-																								console.log(data);
-																								return data[0];
-																								}
-																			});
-
+  if(user === "test"){
+      return {user:"test"};
+  }
+  return null;
 }
 
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
 function getMeasureAtTime(timeDate){ // a verifier
   return mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
-				                           if (err) { throw err; }
-				                              else {
-				                                    console.log(data);
-				                                    return data[0];
-				                                    }
-                      						});
+                          if (err) { throw err; }
+                              else {
+                                          // comms est un tableau de hash
+                                          console.log(data);
+                                          return data[0];
+                                      }
+                      });
 }
 
-function createAssociation(user, password, serialNumber){
-  //creation du lien entre le id e
-	const association = new Association();
-  sensor.save();
-  console.log(measure);
-
+function createAssociation(data){
+  //creation du lien entre le id et
 }
 
 //measure structure : {serial, timestamp, light, temperature, humidity}
@@ -133,17 +137,11 @@ premier lancement
 	check id utilisable et assocaition numsérie id <-central
 usage
 	envoie timestamp data et numsérie
-<<<<<<< HEAD
-
-
-gestion mémoire
-=======
-
+	
 	currentValue oldValue
-gestion mémoire
->>>>>>> eeee437438e11e4a51124969a0b0743857ff78dd
+gestion mémoire 
 x dernières périodes de 1 minute enregistrées
     => utilisation d'un marqueur temps perso
-
+    
 
 */
