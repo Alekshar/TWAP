@@ -1,4 +1,4 @@
-const SERIAL_NUMBER = 01245608;
+const SERIAL_NUMBER = 01245678;
 
 var serialport = require('serialport'),
 	portName = '/dev/ttyUSB0', //TODO manage as a parameter
@@ -61,11 +61,7 @@ const ws = new WebSocket('ws://localhost:3000');
 
 ws.on('open', function open() {
 	console.log('connected to central');
-	if (!fs.existsSync("installed")) {
-		tryInstall();
-	} else {
-		identify();
-	}
+	identify();
 });
 
 function identify(){
@@ -88,10 +84,13 @@ function tryInstall(){
 ws.on('message', function incoming(message, flags) {
 	var data = JSON.parse(message);
 	switch(data.type){
-	case "identified":
-		starting = false;
-		console.log("démarré");
-		break;
+    case "identified":
+        starting = false;
+        console.log("démarré");
+        break;
+    case "unknown":
+        tryInstall();
+        break;
 	case "associationConfirmed":
 		fs.writeFile("installed", "done", function(err) {
 		    console.log("Association terminée");
