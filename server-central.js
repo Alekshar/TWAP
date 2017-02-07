@@ -20,7 +20,15 @@ var wss = new WebSocketServer({
 	server: server
 });
 
+//Connexion a à la base de données
+//creer le schmea association
+/*
+var db = 'mongodb://mongodb:27017/Arduino';
+var mongoose   =  require("mongoose");
+var connection = mongoose.connect(db);
+let Sensor = require("./model/Sensor");
 
+*/
 wss.on('connection', function(client) {
 	client.on('message', function(message) {
 		message = privateKey.decrypt(message, 'UTF-8');
