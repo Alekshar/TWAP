@@ -106,15 +106,15 @@ wss.on('connection', function(client) {
 
 function getAssociationForSerial(serial, callback){
 	mongoose.model('Association').find({"serial": serial}, (err, data) =>{
-	    if (err) { 
-	        throw err; 
+	    if (err) {
+	        throw err;
 	    }
 		else {
     		console.log(data);
     		callback(data[0]);
 		}
     });
-		
+
 }
 
 
@@ -134,12 +134,11 @@ function getAssociationForUser(user,callback){
 }
 
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
-      
-function getMeasureAtTime(timeDate, callback){ // a verifier
-  mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
+
+function getMeasureAtTime(timeDate, callback){
+  mongoose.model('Sensors').find({"timestamp":{ $gt: timesDate }}, (err, data) => {
             if (err) { throw err; }
           	else {
-                    // comms est un tableau de hash
                     console.log(data);
                     callback(data[0]) ;
                 	}
@@ -153,8 +152,17 @@ function createAssociation(data){
   console.log(data);
 }
 
+function removeMeasure(){
+	var now = new Date();
+	now.setDate(now.getDate()-1);
+	mongoose.model('Sensors').remove({"timestamp": { $lt: now.getTime() }}, (err, data) => {
+            if (err) { throw err; }
+	});)
+}
+
 //measure structure : {serial, timestamp, light, temperature, humidity}
 function saveMeasure(measure){
+	removeMeasure();
   const sensor = new Sensor(measure);
   sensor.save();
   console.log(measure);
