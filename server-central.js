@@ -114,7 +114,15 @@ wss.on('connection', function(client) {
 	});
 });
 
+function encrypt(message, key){
 
+	const cipher = crypto.createCipher('aes192', key);
+
+	let encrypted = cipher.update(message, 'utf8', 'hex');
+	encrypted += cipher.final('hex');
+
+	return encrypted;
+}
 
 /******************************************************************/
 /********* DATA BASE METHODES *********************************/
@@ -133,18 +141,6 @@ function getAssociationForSerial(serial, callback){
 
 }
 
-
-function encrypt(message, key){
-
-	const cipher = crypto.createCipher('aes192', key);
-
-	let encrypted = cipher.update(message, 'utf8', 'hex');
-	encrypted += cipher.final('hex');
-
-	return encrypted;
-}
-
-
 function getAssociationForUser(user,callback){
 	mongoose.model('Association').find({"user": user}, (err, data) =>{
 					if (err) { throw err; }
@@ -157,13 +153,8 @@ function getAssociationForUser(user,callback){
 
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
 
-<<<<<<< HEAD
 function getMeasureAtTime(timeDate, callback){
   mongoose.model('Sensors').find({"timestamp":{ $gt: timesDate }}, (err, data) => {
-=======
-function getMeasureAtTime(timeDate, callback){ // a verifier
-  mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
->>>>>>> 02a48bfc7ab3cf440137863812efeff15913df8f
             if (err) { throw err; }
           	else {
                     console.log(data);
@@ -184,7 +175,7 @@ function removeMeasure(){
 	now.setDate(now.getDate()-1);
 	mongoose.model('Sensors').remove({"timestamp": { $lt: now.getTime() }}, (err, data) => {
             if (err) { throw err; }
-	});)
+	});
 }
 
 //measure structure : {serial, timestamp, light, temperature, humidity}
