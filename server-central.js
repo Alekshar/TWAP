@@ -36,14 +36,15 @@ wss.on('connection', function(client) {
 		switch(data.type){
 		case "identifying":
 			client.serialNumber = data.serial;
-			var assoc = getAssociationForSerial(data.serial);
-			if(assoc == null){
-	            client.send(JSON.stringify({type:"unknown"}));
-			} else {
-	            client.send(JSON.stringify({type:"identified"}));
-			}
+			getAssociationForSerial(data.serial, function(assoc){
+	            if(assoc == null){
+	                client.send(JSON.stringify({type:"unknown"}));
+	            } else {
+	                client.send(JSON.stringify({type:"identified"}));
+	            }
+			});
 			break;
-		case "measure": //gérer broadcast clients (currentValue)
+		case "measure": // gérer broadcast clients (currentValue)
 			data.measure.serial = client.serialNumber;
 			saveMeasure(data.measure);
 			for(userClient of wss.clients) {
@@ -54,37 +55,42 @@ wss.on('connection', function(client) {
 			}
 			break;
 		case "associating":
-			var assoc = getAssociation(data.user);
-			if(assoc === null){
-			    delete data.type;
-				createAssociation(data);
-				client.send(JSON.stringify({type:"associationConfirmed"}));
-			} else {
-				client.send(JSON.stringify({type:"associationRefused",reason:"Identifiant déjà utilisé"}));
-			}
+		    getAssociationForUser(data.user, function(assoc){
+		        console.log(assoc);
+		        if(assoc === undefined){
+	                delete data.type;
+	                createAssociation(data);
+	                client.send(JSON.stringify({type:"associationConfirmed"}));
+	            } else {
+	                client.send(JSON.stringify({type:"associationRefused",reason:"Identifiant déjà utilisé"}));
+	            }
+		    });
 			break;
-		case "history"://{date} -> oldValue
-		    var measure = getMeasureAtTime(data.date);
-		    client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure})));
+		case "history":// {date} -> oldValue
+		    getMeasureAtTime(data.date, function(measure){
+	            client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure})));
+		    });
 		    break;
-		case "login"://{user,password} -> {type:"loginConfirmed"}, "loginRefused"
-		    var assoc = getAssociation(data.user);
-		    if(data.user == "ok"){
-                client.userSerial = assoc.serial;
-                client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
-		    } else if(data.user == "fail"){
-                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
-		    }
-		    if(assoc === null){
-                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
-            } else {
-                if(assoc.password == data.password){
-                    client.userSerial = assoc.serial;
-                    client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
-                } else {
-                    client.send(encrypt(JSON.stringify({type:"loginRefused"})));
-                }
-            }
+		case "login":// {user,password} -> {type:"loginConfirmed"},
+                        // "loginRefused"
+		    getAssociationForUser(data.user, function(assoc){
+	            if(data.user == "ok"){
+	                client.userSerial = assoc.serial;
+	                client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
+	            } else if(data.user == "fail"){
+	                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	            }
+	            if(assoc === null){
+	                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	            } else {
+	                if(assoc.password == data.password){
+	                    client.userSerial = assoc.serial;
+	                    client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
+	                } else {
+	                    client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	                }
+	            }
+		    });
 		    break;
 		default:
 			console.log("unmanaged action "+data.type);
@@ -100,12 +106,15 @@ wss.on('connection', function(client) {
 
 function getAssociationForSerial(serial, callback){
 	mongoose.model('Association').find({"serial": serial}, (err, data) =>{
-					if (err) { throw err; }
-							else {
-										console.log(data);
-										callback(data[0]);
-										}
-	});
+	    if (err) { 
+	        throw err; 
+	    }
+		else {
+    		console.log(data);
+    		callback(data[0]);
+		}
+    });
+		
 }
 
 
@@ -125,6 +134,7 @@ function getAssociationForUser(user,callback){
 }
 
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
+      
 function getMeasureAtTime(timeDate, callback){ // a verifier
   mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
             if (err) { throw err; }
@@ -163,6 +173,10 @@ usage
 gestion mémoire
 x dernières périodes de 1 minute enregistrées
     => utilisation d'un marqueur temps perso
+
+
+vider +24h
+pb timestamp server local pas central
 
 
 */
