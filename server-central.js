@@ -157,13 +157,8 @@ function getAssociationForUser(user,callback){
 
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
 
-<<<<<<< HEAD
 function getMeasureAtTime(timeDate, callback){
   mongoose.model('Sensors').find({"timestamp":{ $gt: timesDate }}, (err, data) => {
-=======
-function getMeasureAtTime(timeDate, callback){ // a verifier
-  mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
->>>>>>> 02a48bfc7ab3cf440137863812efeff15913df8f
             if (err) { throw err; }
           	else {
                     console.log(data);
@@ -184,7 +179,7 @@ function removeMeasure(){
 	now.setDate(now.getDate()-1);
 	mongoose.model('Sensors').remove({"timestamp": { $lt: now.getTime() }}, (err, data) => {
             if (err) { throw err; }
-	});)
+	});
 }
 
 //measure structure : {serial, timestamp, light, temperature, humidity}
