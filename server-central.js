@@ -4,8 +4,7 @@ var fileKey = fs.readFileSync('private.pem', 'UTF-8');
 var privateKey = nodeRSA();
 privateKey.importKey(fileKey);
 
-// To decrypt the crypted message, we just have to do : privateKey.decrypt('An
-// awesome crypted message', 'UTF-8');
+//To decrypt the crypted message, we just have to do : privateKey.decrypt('An awesome crypted message', 'UTF-8');
 
 var http = require('http'),
 	WebSocket = require('ws'),
@@ -22,10 +21,7 @@ var wss = new WebSocketServer({
 });
 
 
-/**
- * ************* CONNECTION TO MONGODB
- * *******************************************************
- */
+/*************** CONNECTION TO MONGODB ********************************************************/
 
 var db = 'mongodb://localhost:27017/Arduino';
 var mongoose   =  require("mongoose");
@@ -104,9 +100,9 @@ wss.on('connection', function(client) {
 
 
 
-/** *************************************************************** */
-/** ******* DATA BASE METHODES ******************************** */
-/** ************************************************************* */
+/******************************************************************/
+/********* DATA BASE METHODES *********************************/
+/****************************************************************/
 
 function getAssociationForSerial(serial, callback){
 	mongoose.model('Association').find({"serial": serial}, (err, data) =>{
@@ -118,6 +114,7 @@ function getAssociationForSerial(serial, callback){
     		callback(data[0]);
 		}
     });
+		
 }
 
 
@@ -126,33 +123,37 @@ function encrypt(message){
 }
 
 
-function getAssociation(user){
-  if(user === "test"){
-      return {user:"test"};
-  }
-  return null;
+function getAssociationForUser(user,callback){
+	mongoose.model('Association').find({"user": user}, (err, data) =>{
+					if (err) { throw err; }
+							else {
+										console.log(data);
+										callback(data[0]);
+										}
+	});
 }
 
-// TODO besoin de prendre la prochaine mesure la plus proche de cette date
-function getMeasureAtTime(timeDate){ // a verifier
-    return mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
-        if (err) { throw err; }
-          else {
-              // comms est un tableau de hash
-                  console.log(data);
-                  return data[0];
-              }
-      });
+//TODO besoin de prendre la prochaine mesure la plus proche de cette date
+      
+function getMeasureAtTime(timeDate, callback){ // a verifier
+  mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
+            if (err) { throw err; }
+          	else {
+                    // comms est un tableau de hash
+                    console.log(data);
+                    callback(data[0]) ;
+                	}
+	});
 }
 
 function createAssociation(data){
-  // creation du lien entre le id e
+  //creation du lien entre le id e
 	const association = new Association(data);
   association.save();
   console.log(data);
 }
 
-// measure structure : {serial, timestamp, light, temperature, humidity}
+//measure structure : {serial, timestamp, light, temperature, humidity}
 function saveMeasure(measure){
   const sensor = new Sensor(measure);
   sensor.save();
@@ -161,12 +162,17 @@ function saveMeasure(measure){
 
 
 /*
- * 
- * premier lancement saisie id/pass <- local check id utilisable et assocaition
- * numsérie id <-central usage envoie timestamp data et numsérie
- * 
- * currentValue oldValue gestion mémoire x dernières périodes de 1 minute
- * enregistrées => utilisation d'un marqueur temps perso
- * 
- * 
- */
+
+premier lancement
+	saisie id/pass <- local
+	check id utilisable et assocaition numsérie id <-central
+usage
+	envoie timestamp data et numsérie
+
+	currentValue oldValue
+gestion mémoire
+x dernières périodes de 1 minute enregistrées
+    => utilisation d'un marqueur temps perso
+
+
+*/
