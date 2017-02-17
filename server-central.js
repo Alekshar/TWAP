@@ -4,6 +4,7 @@ var nodeRSA = require('node-rsa');
 var crypto = require('crypto');
 var fileKey = fs.readFileSync('private.pem', 'UTF-8');
 var privateKey = nodeRSA();
+var aes_key = '';
 privateKey.importKey(fileKey);
 
 //To decrypt the crypted message, we just have to do : privateKey.decrypt('An awesome crypted message', 'UTF-8');
@@ -133,8 +134,14 @@ function getAssociationForSerial(serial, callback){
 }
 
 
-function encrypt(message){
+function encrypt(message, key){
 
+	const cipher = crypto.createCipher('aes192', key);
+
+	let encrypted = cipher.update(message, 'utf8', 'hex');
+	encrypted += cipher.final('hex');
+
+	return encrypted;
 }
 
 
