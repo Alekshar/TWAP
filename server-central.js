@@ -60,7 +60,7 @@ wss.on('connection', function(client) {
 	            }
 			});
 			break;
-		case "measure": 
+		case "measure":
 			data.measure.serial = client.serialNumber;
 			saveMeasure(data.measure);
 			for(userClient of wss.clients) {
@@ -116,6 +116,17 @@ wss.on('connection', function(client) {
 
 
 
+function encrypt(message, key){
+
+	const cipher = crypto.createCipher('aes192', key);
+
+	let encrypted = cipher.update(message, 'utf8', 'hex');
+	encrypted += cipher.final('hex');
+
+	return "<c>"+encrypted;
+}
+
+
 /******************************************************************/
 /********* DATA BASE METHODES *********************************/
 /****************************************************************/
@@ -132,18 +143,6 @@ function getAssociationForSerial(serial, callback){
     });
 
 }
-
-
-function encrypt(message, key){
-
-	const cipher = crypto.createCipher('aes192', key);
-
-	let encrypted = cipher.update(message, 'utf8', 'hex');
-	encrypted += cipher.final('hex');
-
-	return "<c>"+encrypted;
-}
-
 
 function getAssociationForUser(user,callback){
 	mongoose.model('Association').find({"user": user}, (err, data) =>{
