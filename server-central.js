@@ -1,5 +1,6 @@
 var fs = require('fs');
 var nodeRSA = require('node-rsa');
+var crypto = require('crypto');
 var fileKey = fs.readFileSync('private.pem', 'UTF-8');
 var privateKey = nodeRSA();
 privateKey.importKey(fileKey);
@@ -106,15 +107,15 @@ wss.on('connection', function(client) {
 
 function getAssociationForSerial(serial, callback){
 	mongoose.model('Association').find({"serial": serial}, (err, data) =>{
-	    if (err) { 
-	        throw err; 
+	    if (err) {
+	        throw err;
 	    }
 		else {
     		console.log(data);
     		callback(data[0]);
 		}
     });
-		
+
 }
 
 
@@ -134,7 +135,7 @@ function getAssociationForUser(user,callback){
 }
 
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
-      
+
 function getMeasureAtTime(timeDate, callback){ // a verifier
   mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
             if (err) { throw err; }
