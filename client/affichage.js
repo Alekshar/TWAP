@@ -79,6 +79,18 @@ function tryLogin(){
     ws.send(encrypt(JSON.stringify({type:"login", user:login, password:password})));
 }
 
+function encrypt(message){
+    
+}
+
+function decrypt(message){
+    if(message.indexOf('<c>') == 0){
+        var crypted = message.substring(3, message.length);
+        console.log(crypted);
+        //TODO decrypt
+    }
+    return message;
+}
 
 var ws = new WebSocket("ws://" + window.location.host+":3000");
 

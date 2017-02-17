@@ -60,7 +60,7 @@ wss.on('connection', function(client) {
 	            }
 			});
 			break;
-		case "measure": // gérer broadcast clients (currentValue)
+		case "measure":
 			data.measure.serial = client.serialNumber;
 			saveMeasure(data.measure);
 			for(userClient of wss.clients) {
@@ -114,6 +114,8 @@ wss.on('connection', function(client) {
 	});
 });
 
+
+
 function encrypt(message, key){
 
 	const cipher = crypto.createCipher('aes192', key);
@@ -121,8 +123,9 @@ function encrypt(message, key){
 	let encrypted = cipher.update(message, 'utf8', 'hex');
 	encrypted += cipher.final('hex');
 
-	return encrypted;
+	return "<c>"+encrypted;
 }
+
 
 /******************************************************************/
 /********* DATA BASE METHODES *********************************/
