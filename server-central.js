@@ -98,14 +98,14 @@ wss.on('connection', function(client) {
 /********* DATA BASE METHODES *********************************/
 /****************************************************************/
 
-function getAssociationForSerial(serial){
+function getAssociationForSerial(serial, callback){
 	mongoose.model('Association').find({"serial": serial}, (err, data) =>{
-																			if (err) { throw err; }
-																					else {
-																								console.log(data);
-																								return data[0];
-																								}
-																			});
+					if (err) { throw err; }
+							else {
+										console.log(data);
+										callback(data[0]);
+										}
+	});
 }
 
 
@@ -114,23 +114,26 @@ function encrypt(message){
 }
 
 
-function getAssociation(user){
-  if(user === "test"){
-      return {user:"test"};
-  }
-  return null;
+function getAssociationForUser(user,callback){
+	mongoose.model('Association').find({"user": user}, (err, data) =>{
+					if (err) { throw err; }
+							else {
+										console.log(data);
+										callback(data[0]);
+										}
+	});
 }
 
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
-function getMeasureAtTime(timeDate){ // a verifier
-  return mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
-                          if (err) { throw err; }
-                              else {
-                                          // comms est un tableau de hash
-                                          console.log(data);
-                                          return data[0];
-                                      }
-                      });
+function getMeasureAtTime(timeDate, callback){ // a verifier
+  mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
+            if (err) { throw err; }
+          	else {
+                    // comms est un tableau de hash
+                    console.log(data);
+                    callback(data[0]) ;
+                	}
+	});
 }
 
 function createAssociation(data){
