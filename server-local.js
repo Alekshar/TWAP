@@ -1,4 +1,4 @@
-const SERIAL_NUMBER = 01245698;
+const SERIAL_NUMBER = 01245678;
 
 var serialport = require('serialport'),
 	portName = '/dev/ttyUSB0', //TODO manage as a parameter
@@ -15,7 +15,7 @@ publicKey.importKey(fileKey);
 
 //To encrypt the message, we just have to do : publicKey.encrypt('An awesome message', 'Base64');
 
-/*
+//*
 setInterval(function(){
 	parseAndSend(randomBetween(0,255)+","+randomBetween(0,255)+","+randomBetween(0,255));
 }, 100);
@@ -24,7 +24,7 @@ function randomBetween(min, max) {
     return Math.floor(min + Math.random() * max);
 }
 
-*/
+/*/
 var sp = new serialport.SerialPort(portName, {
     baudRate: 9600,
     dataBits: 8,
@@ -61,11 +61,7 @@ const ws = new WebSocket('ws://localhost:3000');
 
 ws.on('open', function open() {
 	console.log('connected to central');
-	if (!fs.existsSync("installed")) {
-		tryInstall();
-	} else {
-		identify();
-	}
+	identify();
 });
 
 function identify(){
@@ -76,7 +72,7 @@ function identify(){
 function tryInstall(){
 	var installData = {type:"associating", serial:SERIAL_NUMBER};
 	rl.question('identifiant : ',function(answer){
-		installData.id = answer;
+		installData.user = answer;
 		rl.question('mot de passe : ', function(answer){
 			installData.password = answer;
 			let message = JSON.stringify(installData);
@@ -88,10 +84,13 @@ function tryInstall(){
 ws.on('message', function incoming(message, flags) {
 	var data = JSON.parse(message);
 	switch(data.type){
-	case "identified":
-		starting = false;
-		console.log("démarré");
-		break;
+    case "identified":
+        starting = false;
+        console.log("démarré");
+        break;
+    case "unknown":
+        tryInstall();
+        break;
 	case "associationConfirmed":
 		fs.writeFile("installed", "done", function(err) {
 		    console.log("Association terminée");
