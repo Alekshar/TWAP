@@ -12,4 +12,4 @@ var associationSchema  = new mongoSchema (
 );
 
 // create model if not exists.
-module.exports = mongoose.model("Associations",associationSchema);
+module.exports = mongoose.model("Association",associationSchema);
