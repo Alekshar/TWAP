@@ -65,7 +65,7 @@ wss.on('connection', function(client) {
 			for(userClient of wss.clients) {
 			    if(typeof userClient.userSerial != "undefined"
 			        && userClient.userSerial == data.measure.serial){
-			        userClient.send(encrypt(JSON.stringify({type:"currentValue", measure:data.measure})));
+			        userClient.send(encrypt(JSON.stringify({type:"currentValue", measure:data.measure}), userClient.key));
 			    }
 			}
 			break;
@@ -83,7 +83,7 @@ wss.on('connection', function(client) {
 			break;
 		case "history":// {date} -> oldValue
 		    getMeasureAtTime(data.date, function(measure){
-	            client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure})));
+	            client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure}), client.key));
 		    });
 		    break;
 		case "login":// {user,password} -> {type:"loginConfirmed"},
@@ -91,18 +91,18 @@ wss.on('connection', function(client) {
 		    getAssociationForUser(data.user, function(assoc){
 	            if(data.user == "ok"){
 	                client.userSerial = assoc.serial;
-	                client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
+	                client.send(encrypt(JSON.stringify({type:"loginConfirmed"}), client.key));
 	            } else if(data.user == "fail"){
-	                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	                client.send(JSON.stringify({type:"loginRefused"}));
 	            }
 	            if(assoc === null){
-	                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	                client.send(JSON.stringify({type:"loginRefused"}));
 	            } else {
 	                if(assoc.password == data.password){
 	                    client.userSerial = assoc.serial;
-	                    client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
+	                    client.send(encrypt(JSON.stringify({type:"loginConfirmed"}), client.key));
 	                } else {
-	                    client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	                    client.send(JSON.stringify({type:"loginRefused"}));
 	                }
 	            }
 		    });

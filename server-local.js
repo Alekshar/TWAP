@@ -1,4 +1,4 @@
-const SERIAL_NUMBER = 015245678;
+const SERIAL_NUMBER = 01525678;
 
 var serialport = require('serialport'),
 	portName = '/dev/ttyUSB0', //TODO manage as a parameter

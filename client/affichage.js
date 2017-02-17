@@ -1,18 +1,18 @@
 document.addEventListener("DOMContentLoaded", function(event) { 
 	var canvas = document.getElementById('tutoriel');
-	var ctx = canvas.getContext('2d');
+	ctx = canvas.getContext('2d');
 
 	//Simulation du serveur
 	if (canvas.getContext){
-		var ctx = canvas.getContext('2d');
+		ctx = canvas.getContext('2d');
 	  	
-	  	var interval = setInterval(function(){
-	  		var L = Math.floor(Math.random()*255);
-	  		var H = Math.floor(Math.random()*100);
-	  		var T = Math.floor(Math.random()*100 -50);
-
-	  		afficherCanvas(ctx,L,H,T);
-	  	} ,1000);
+//	  	var interval = setInterval(function(){
+//	  		var L = Math.floor(Math.random()*255);
+//	  		var H = Math.floor(Math.random()*100);
+//	  		var T = Math.floor(Math.random()*100 -50);
+//
+//	  		afficherCanvas(ctx,L,H,T);
+//	  	} ,1000);
 	} else {
 		console.log("Change de navigateur !")
 	}
@@ -38,7 +38,7 @@ var HAUTEUR_SOL = 150;
 var WHITE = "rgb(255,255,255)";
 var GREEN = "rgb(0,255,100)";
 
-function afficherCanvas(ctx, L, H, T){
+function afficherCanvas(L, H, T){
 	
 	//Jour/Nuit
 	ctx.fillStyle = "rgb(0,"+Math.floor(L*3/4)+","+L+")";
@@ -70,3 +70,38 @@ function afficherCanvas(ctx, L, H, T){
 	ctx.drawImage(imgNuage, 190, 13);
 	ctx.drawImage(imgNuage, 380, 10);*/
 }
+
+
+function tryLogin(){
+    var login = document.querySelector("#login").value;
+    var password = document.querySelector("#password").value;
+    //TODO hash password
+    ws.send(encrypt(JSON.stringify({type:"login", user:login, password:password})));
+}
+
+
+var ws = new WebSocket("ws://" + window.location.host+":3000");
+
+ws.onopen = function(event) {
+  console.log("connected");
+};
+
+ws.onmessage = function(event) {
+    var data = decrypt(event.data);
+    switch(data.type){
+    case "loginConfirmed":
+        //TODO
+        break;
+    case "loginRefused":
+        //TODO
+        break;
+    case "oldValue":
+        //TODO
+        break;
+    case "currentValue":
+        //TODO
+        break;
+    default:
+        console.log("unknown event : "+data.type);
+    }
+};
