@@ -5,9 +5,9 @@ var mongoSchema =   mongoose.Schema;
 // create schema
 var associationSchema  = new mongoSchema (
   {
-    "user": string ,
-    "password": string ,
-    "serial": string
+    "user": String ,
+    "password": String ,
+    "serial": String
   }
 );
 

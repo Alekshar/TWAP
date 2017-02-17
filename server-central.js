@@ -20,14 +20,11 @@ var wss = new WebSocketServer({
 	server: server
 });
 
-//Connexion a à la base de données
-//creer le schmea association
-
+/*************** CONNECTION TO MONGODB ********************************************************/
 var db = 'mongodb://localhost:27017/Arduino';
 var mongoose   =  require("mongoose");
 var connection = mongoose.connect(db);
 let Sensor = require("./modele/sensors");
-
 let Association = require("./modele/association");
 
 
@@ -82,12 +79,23 @@ wss.on('connection', function(client) {
 	});
 });
 
+
+/******************************************************************/
+/********* DATA BASE METHODES *********************************/
+/****************************************************************/
+
 function getAssociationForSerial(serial){
-    return null;
+	mongoose.model('Association').find({"serial": serial}, (err, data) =>{
+																			if (err) { throw err; }
+																					else {
+																								console.log(data);
+																								return data[0];
+																								}
+																			});
 }
 
-//Database methods
 
+//TODO comment recuperer les resultats
 function getAssociation(user){
 	return mongoose.model('Association').find({"user": user}, (err, data) =>{
 																			if (err) { throw err; }
@@ -110,9 +118,9 @@ function getMeasureAtTime(timeDate){ // a verifier
                       						});
 }
 
-function createAssociation(user, password, serialNumber){
+function createAssociation(data){
   //creation du lien entre le id e
-	const association = new Association();
+	const association = new Association(data);
   sensor.save();
   console.log(measure);
 
