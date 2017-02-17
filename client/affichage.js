@@ -89,6 +89,7 @@ function decrypt(message){
         console.log(crypted);
         //TODO decrypt
     }
+    return message;
 }
 
 var ws = new WebSocket("ws://" + window.location.host+":3000");
