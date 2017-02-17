@@ -1,14 +1,30 @@
 var fs = require('fs');
+var express = require('express');
 var nodeRSA = require('node-rsa');
+var crypto = require('crypto');
 var fileKey = fs.readFileSync('private.pem', 'UTF-8');
 var privateKey = nodeRSA();
+var aes_key = '';
 privateKey.importKey(fileKey);
 
 //To decrypt the crypted message, we just have to do : privateKey.decrypt('An awesome crypted message', 'UTF-8');
 
+
 var http = require('http'),
 	WebSocket = require('ws'),
 	WebSocketServer = WebSocket.Server;
+
+
+var app = express();
+
+app.use(express.static('client'));
+
+var webserv = http.createServer();
+webserv.on('request', app);
+webserv.listen('80', '0.0.0.0', function() {
+  console.log('Listening on ' + webserv.address().address + ':' + webserv.address().port);
+});
+
 
 
 var server = http.createServer();
@@ -50,7 +66,7 @@ wss.on('connection', function(client) {
 			for(userClient of wss.clients) {
 			    if(typeof userClient.userSerial != "undefined"
 			        && userClient.userSerial == data.measure.serial){
-			        userClient.send(encrypt(JSON.stringify({type:"currentValue", measure:data.measure})));
+			        userClient.send(encrypt(JSON.stringify({type:"currentValue", measure:data.measure}), userClient.key));
 			    }
 			}
 			break;
@@ -68,7 +84,7 @@ wss.on('connection', function(client) {
 			break;
 		case "history":// {date} -> oldValue
 		    getMeasureAtTime(data.date, function(measure){
-	            client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure})));
+	            client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure}), client.key));
 		    });
 		    break;
 		case "login":// {user,password} -> {type:"loginConfirmed"},
@@ -76,18 +92,18 @@ wss.on('connection', function(client) {
 		    getAssociationForUser(data.user, function(assoc){
 	            if(data.user == "ok"){
 	                client.userSerial = assoc.serial;
-	                client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
+	                client.send(encrypt(JSON.stringify({type:"loginConfirmed"}), client.key));
 	            } else if(data.user == "fail"){
-	                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	                client.send(JSON.stringify({type:"loginRefused"}));
 	            }
 	            if(assoc === null){
-	                client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	                client.send(JSON.stringify({type:"loginRefused"}));
 	            } else {
 	                if(assoc.password == data.password){
 	                    client.userSerial = assoc.serial;
-	                    client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
+	                    client.send(encrypt(JSON.stringify({type:"loginConfirmed"}), client.key));
 	                } else {
-	                    client.send(encrypt(JSON.stringify({type:"loginRefused"})));
+	                    client.send(JSON.stringify({type:"loginRefused"}));
 	                }
 	            }
 		    });
@@ -118,8 +134,14 @@ function getAssociationForSerial(serial, callback){
 }
 
 
-function encrypt(message){
+function encrypt(message, key){
 
+	const cipher = crypto.createCipher('aes192', key);
+
+	let encrypted = cipher.update(message, 'utf8', 'hex');
+	encrypted += cipher.final('hex');
+
+	return encrypted;
 }
 
 
@@ -135,8 +157,13 @@ function getAssociationForUser(user,callback){
 
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
 
+<<<<<<< HEAD
 function getMeasureAtTime(timeDate, callback){
   mongoose.model('Sensors').find({"timestamp":{ $gt: timesDate }}, (err, data) => {
+=======
+function getMeasureAtTime(timeDate, callback){ // a verifier
+  mongoose.model('Sensors').find({"timestamp": timeDate}, (err, data) => {
+>>>>>>> 02a48bfc7ab3cf440137863812efeff15913df8f
             if (err) { throw err; }
           	else {
                     console.log(data);

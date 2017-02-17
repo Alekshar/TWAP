@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>TamagOchIoT</title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script type="text/javascript" src="affichage.js"></script>
+<!-- 	<script type="text/javascript" src="history.js"></script> -->
+<!--    <script type="text/javascript" src="communication.js"></script> -->
+</head>
+<body>
+	<h1>TamagotchIoT</h1>
+	<div>
+		<input id="login" type="text" placeholder="login"/>
+		<input id="password" type="password" placeholder="password"/>	
+		<button onclick="tryLogin()">Log</button>
+	</div>
+
+	<div>
+		<canvas id="tutoriel" width="600" height="600">
+			
+		</canvas>
+	</div>
+
+	<div>
+		<input id="rangeHistory" type="range" min="0" max="288" value="288" oninput="history(this.value)" onchange="requestHistory(this.value)"/>
+		<p id="rangeText">Current date</p>
+	</div>
+</body>
+</html>

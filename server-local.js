@@ -1,4 +1,4 @@
-const SERIAL_NUMBER = 017245678;
+const SERIAL_NUMBER = 01525678;
 
 var serialport = require('serialport'),
 	portName = '/dev/ttyUSB0', //TODO manage as a parameter
@@ -8,6 +8,8 @@ var serialport = require('serialport'),
 	rl = readline.createInterface(process.stdin, process.stdout),
 	starting = true;
 
+var crypto = require('crypto');
+const hash = crypto.createHash('sha256');
 var nodeRSA = require('node-rsa');
 var fileKey = fs.readFileSync('public.pem', 'UTF-8');
 var publicKey = nodeRSA();
@@ -74,7 +76,8 @@ function tryInstall(){
 	rl.question('identifiant : ',function(answer){
 		installData.user = answer;
 		rl.question('mot de passe : ', function(answer){
-			installData.password = answer;
+			hash.update(answer);
+			installData.password = hash.digest('hex');
 			let message = JSON.stringify(installData);
 			ws.send(publicKey.encrypt(message, 'Base64'));
 		});
