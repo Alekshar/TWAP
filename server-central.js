@@ -36,7 +36,6 @@ wss.on('connection', function(client) {
 		switch(data.type){
 		case "identifying":
 			client.serialNumber = data.serial;
-//			var assoc = getAssociationForSerial(data.serial);
 			getAssociationForSerial(data.serial, function(assoc){
 	            if(assoc == null){
 	                client.send(JSON.stringify({type:"unknown"}));
@@ -56,8 +55,9 @@ wss.on('connection', function(client) {
 			}
 			break;
 		case "associating":
-		    getAssociation(data.user, function(assoc){
-		        if(assoc === null){
+		    getAssociationForUser(data.user, function(assoc){
+		        console.log(assoc);
+		        if(assoc === undefined){
 	                delete data.type;
 	                createAssociation(data);
 	                client.send(JSON.stringify({type:"associationConfirmed"}));
@@ -73,7 +73,7 @@ wss.on('connection', function(client) {
 		    break;
 		case "login":// {user,password} -> {type:"loginConfirmed"},
                         // "loginRefused"
-	        getAssociation(data.user, function(assoc){
+		    getAssociationForUser(data.user, function(assoc){
 	            if(data.user == "ok"){
 	                client.userSerial = assoc.serial;
 	                client.send(encrypt(JSON.stringify({type:"loginConfirmed"})));
@@ -173,6 +173,10 @@ usage
 gestion mémoire
 x dernières périodes de 1 minute enregistrées
     => utilisation d'un marqueur temps perso
+
+
+vider +24h
+pb timestamp server local pas central
 
 
 */
