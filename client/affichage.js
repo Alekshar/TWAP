@@ -1,11 +1,11 @@
-document.addEventListener("DOMContentLoaded", function(event) { 
+document.addEventListener("DOMContentLoaded", function(event) {
 	var canvas = document.getElementById('tutoriel');
 	ctx = canvas.getContext('2d');
 
 	//Simulation du serveur
 	if (canvas.getContext){
 		ctx = canvas.getContext('2d');
-	  	
+
 //	  	var interval = setInterval(function(){
 //	  		var L = Math.floor(Math.random()*255);
 //	  		var H = Math.floor(Math.random()*100);
@@ -38,11 +38,13 @@ var HAUTEUR_SOL = 150;
 var WHITE = "rgb(255,255,255)";
 var GREEN = "rgb(0,255,100)";
 
+var key = '';
+
 function afficherCanvas(L, H, T){
-	
+
 	//Jour/Nuit
 	ctx.fillStyle = "rgb(0,"+Math.floor(L*3/4)+","+L+")";
-	
+
 
 	//Sol
 	ctx.fillRect (0, 0, 600, 450);
@@ -75,19 +77,25 @@ function afficherCanvas(L, H, T){
 function tryLogin(){
     var login = document.querySelector("#login").value;
     var password = document.querySelector("#password").value;
-    //TODO hash password
+  	password = CryptoJS.SHA256(password);
+		key = password;
     ws.send(encrypt(JSON.stringify({type:"login", user:login, password:password})));
 }
 
 function encrypt(message){
-    
+	var encrypt = new JSEncrypt();
+	var pkey = file_get_contents('public.pem');
+  encrypt.setPublicKey(pkey);
+  var encrypted = encrypt.encrypt(message);
+
+	return encrypted;
 }
 
 function decrypt(message){
     if(message.indexOf('<c>') == 0){
         var crypted = message.substring(3, message.length);
         console.log(crypted);
-        //TODO decrypt
+        return CryptoJS.AES.decrypt(crypted, key);
     }
     return message;
 }
