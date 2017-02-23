@@ -47,7 +47,11 @@ let Association = require("./modele/association");
 
 wss.on('connection', function(client) {
 	client.on('message', function(message) {
-		message = privateKey.decrypt(message, 'UTF-8');
+		try {
+			message = privateKey.decrypt(message, 'UTF-8');
+		} catch(e){
+			console.error('Something wrong append, maybe the message was encrypted with a wrong key ?')
+		}
 		var data = JSON.parse(message);
 		switch(data.type){
 		case "identifying":
