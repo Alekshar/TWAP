@@ -29,14 +29,10 @@ function decrypt(message){
           arr.push(d.charCodeAt(0));
         });
         var crypted = message.substring(3, message.length);
-				//console.log("New Object " + arr);
         var aesCtr = new aesjs.ModeOfOperation.ctr(arr);
-        //console.log("Starting decrypt");
         var encryptedBytes = aesjs.utils.hex.toBytes(crypted);
 				var decryptedBytes = aesCtr.decrypt(encryptedBytes);
-        //console.log(decryptedBytes);
         var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
-        //console.log(decryptedText);
     }
     return message;
 }
