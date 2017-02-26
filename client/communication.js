@@ -46,6 +46,7 @@ ws.onopen = function(event) {
 
 ws.onmessage = function(event) {
     var data = JSON.parse(decrypt(event.data));
+    console.log(data);
     switch(data.type){
     case "loginConfirmed":
         //TODO
@@ -59,6 +60,7 @@ ws.onmessage = function(event) {
         break;
     case "currentValue":
         //TODO
+        afficherCanvas(data.measure.light,data.measure.humidity,data.measure.temperature)
         break;
     default:
         console.log("unknown event : "+data.type);

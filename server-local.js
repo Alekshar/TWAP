@@ -20,8 +20,8 @@ publicKey.importKey(fileKey);
 
 //*
 setInterval(function(){
-	parseAndSend(randomBetween(0,255)+","+randomBetween(0,255)+","+randomBetween(0,255));
-}, 100);
+	parseAndSend(randomBetween(0,255)+","+randomBetween(-15,50)+","+randomBetween(0,100));
+}, 1000);
 
 function randomBetween(min, max) {
     return Math.floor(min + Math.random() * max);
