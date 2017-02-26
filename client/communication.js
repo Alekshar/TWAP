@@ -23,10 +23,20 @@ function encrypt(message){
 
 function decrypt(message){
     if(message.indexOf('<c>') == 0){
+        key = key.substring(0,16);
+        var arr = [];
+        key.split("").forEach((d)=>{
+          arr.push(d.charCodeAt(0));
+        });
         var crypted = message.substring(3, message.length);
-				console.log(crypted);
-				console.log(decryptAES(crypted, key.substring(0,16)));
-        //return sjcl.decrypt(key.substring(0,16), crypted);
+				//console.log("New Object " + arr);
+        var aesCtr = new aesjs.ModeOfOperation.ctr(arr);
+        //console.log("Starting decrypt");
+        var encryptedBytes = aesjs.utils.hex.toBytes(crypted);
+				var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+        //console.log(decryptedBytes);
+        var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
+        //console.log(decryptedText);
     }
     return message;
 }

@@ -3,8 +3,8 @@ var express = require('express');
 var nodeRSA = require('node-rsa');
 
 //var crypto = require('crypto');
-var crypto = require('crypto'),
-    algorithm = 'AES-128-CBC';
+/*var crypto = require('crypto'),
+    algorithm = 'AES-128-CTR';*/
 
 var fileKey = fs.readFileSync('private.pem', 'UTF-8');
 var privateKey = nodeRSA({b:1024});
@@ -130,11 +130,12 @@ wss.on('connection', function(client) {
 
 function encrypt(message, key){
 
-	const cipher = crypto.createCipher(algorithm, key.slice(0,16));
-	let encrypted = cipher.update(message, 'utf8', 'base64');
-	encrypted += cipher.final('base64');
+	/*const cipher = crypto.createCipher(algorithm, key.slice(0,16));
+	let encrypted = cipher.update(message, 'utf8', 'Hex');
+	encrypted += cipher.final('Hex');
 
-	return "<c>"+encrypted;
+	return "<c>"+encrypted;*/
+  return message;
 }
 
 
