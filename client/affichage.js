@@ -44,8 +44,6 @@ var HAUTEUR_SOL = 150;
 var WHITE = "rgb(255,255,255)";
 var GREEN = "rgb(0,255,100)";
 
-var key = '';
-
 function afficherCanvas(L, H, T){
 
 	//Jour/Nuit
