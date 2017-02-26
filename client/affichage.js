@@ -18,14 +18,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 });
 
-var publickey = '-----BEGIN PUBLIC KEY-----\n'+
-'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/2YTTXqez7yvxkJor83x7LhVY\n'+
-'nKbgnESbuxKl+hI+vdRwMijxB8/t80+qpYyPjsnpHxdsZAwPRZchJB+/KA1Yppmh\n'+
-'p8B72sElO8K/xhpsBm3QENiu1Nz7h+9fuWn2wI3TlrBgfjfG9IG+VvKpseD8AkZ1\n'+
-'URbFw7bUGXs5ONsT6QIDAQAB\n'+
-'-----END PUBLIC KEY-----';
-
-
 var img = new Image();   // Crée un nouvel objet Image
 	img.src = 'images/Cartman.png'; // Définit le chemin vers sa source
 

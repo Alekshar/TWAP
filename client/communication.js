@@ -1,46 +1,51 @@
 var key = '';
+var publickey = '-----BEGIN PUBLIC KEY-----\n'+
+'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/2YTTXqez7yvxkJor83x7LhVY\n'+
+'nKbgnESbuxKl+hI+vdRwMijxB8/t80+qpYyPjsnpHxdsZAwPRZchJB+/KA1Yppmh\n'+
+'p8B72sElO8K/xhpsBm3QENiu1Nz7h+9fuWn2wI3TlrBgfjfG9IG+VvKpseD8AkZ1\n'+
+'URbFw7bUGXs5ONsT6QIDAQAB\n'+
+'-----END PUBLIC KEY-----';
 
 function tryLogin(){
     var login = document.querySelector("#login").value;
     var password = document.querySelector("#password").value;
-  	password = CryptoJS.SHA256(password);
+  	password = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
 		key = password;
     ws.send(encrypt(JSON.stringify({type:"login", user:login, password:password})));
 }
 
 function encrypt(message){
-	var encrypt = new JSEncrypt();
-	//var pkey = fs.readFileSync('public.pem', 'UTF-8');
-  encrypt.setPublicKey(pkey);
-  var encrypted = encrypt.encrypt(message);
-
+	var encryptRSA = new JSEncrypt();
+  encryptRSA.setPublicKey(publickey);
+  var encrypted = encryptRSA.encrypt(message);
 	return encrypted;
 }
 
 function decrypt(message){
     if(message.indexOf('<c>') == 0){
         var crypted = message.substring(3, message.length);
-        console.log(crypted);
-        return CryptoJS.AES.decrypt(crypted, key);
+				console.log(crypted);
+				console.log(decryptAES(crypted, key.substring(0,16)));
+        //return sjcl.decrypt(key.substring(0,16), crypted);
     }
     return message;
 }
 
-var ws = new WebSocket("ws://localhost:3000");
+var ws = new WebSocket("ws://" + window.location.host+":3000");
 
 ws.onopen = function(event) {
   console.log("connected");
 };
 
 ws.onmessage = function(event) {
-    var data = decrypt(event.data);
-    console.log(data)
+    var data = JSON.parse(decrypt(event.data));
     switch(data.type){
     case "loginConfirmed":
         //TODO
         break;
     case "loginRefused":
         //TODO
+				console.log('Login Refused');
         break;
     case "oldValue":
         //TODO
