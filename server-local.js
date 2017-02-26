@@ -12,7 +12,8 @@ var crypto = require('crypto');
 const hash = crypto.createHash('sha256');
 var nodeRSA = require('node-rsa');
 var fileKey = fs.readFileSync('public.pem', 'UTF-8');
-var publicKey = nodeRSA();
+var publicKey = nodeRSA({b:1024});
+publicKey.setOptions({encryptionScheme: 'pkcs1'});
 publicKey.importKey(fileKey);
 
 //To encrypt the message, we just have to do : publicKey.encrypt('An awesome message', 'Base64');

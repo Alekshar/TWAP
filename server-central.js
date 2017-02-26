@@ -1,10 +1,14 @@
 var fs = require('fs');
 var express = require('express');
 var nodeRSA = require('node-rsa');
-var crypto = require('crypto');
+
+//var crypto = require('crypto');
+var crypto = require('crypto'),
+    algorithm = 'AES-128-CBC';
+
 var fileKey = fs.readFileSync('private.pem', 'UTF-8');
-var privateKey = nodeRSA();
-var aes_key = '';
+var privateKey = nodeRSA({b:1024});
+privateKey.setOptions({encryptionScheme: 'pkcs1'});
 privateKey.importKey(fileKey);
 
 //To decrypt the crypted message, we just have to do : privateKey.decrypt('An awesome crypted message', 'UTF-8');
@@ -98,6 +102,7 @@ wss.on('connection', function(client) {
 		    getAssociationForUser(data.user, function(assoc){
 	            if(data.user == "ok"){
 	                client.userSerial = assoc.serial;
+									client.key = data.password;
 	                client.send(encrypt(JSON.stringify({type:"loginConfirmed"}), client.key));
 	            } else if(data.user == "fail"){
 	                client.send(JSON.stringify({type:"loginRefused"}));
@@ -107,6 +112,7 @@ wss.on('connection', function(client) {
 	            } else {
 	                if(assoc.password == data.password){
 	                    client.userSerial = assoc.serial;
+											client.key = data.password;
 	                    client.send(encrypt(JSON.stringify({type:"loginConfirmed"}), client.key));
 	                } else {
 	                    client.send(JSON.stringify({type:"loginRefused"}));
@@ -124,10 +130,9 @@ wss.on('connection', function(client) {
 
 function encrypt(message, key){
 
-	const cipher = crypto.createCipher('aes192', key);
-
-	let encrypted = cipher.update(message, 'utf8', 'hex');
-	encrypted += cipher.final('hex');
+	const cipher = crypto.createCipher(algorithm, key.slice(0,16));
+	let encrypted = cipher.update(message, 'utf8', 'base64');
+	encrypted += cipher.final('base64');
 
 	return "<c>"+encrypted;
 }
@@ -192,7 +197,7 @@ function saveMeasure(measure){
 	removeMeasure();
   const sensor = new Sensor(measure);
   sensor.save();
-  console.log(measure);
+  //console.log(measure); //TODO REMOVE COMMENT
 }
 
 
