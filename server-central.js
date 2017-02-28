@@ -172,7 +172,7 @@ function getAssociationForUser(user,callback){
 //TODO besoin de prendre la prochaine mesure la plus proche de cette date
 
 function getMeasureAtTime(timeDate, callback){
-  mongoose.model('Sensors').find({"timestamp":{ $gt: timesDate }}, (err, data) => {
+  mongoose.model('Sensors').find({"timestamp":{ $gt: timeDate }}, (err, data) => {
             if (err) { throw err; }
           	else {
                     console.log(data);

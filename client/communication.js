@@ -16,8 +16,8 @@ function tryLogin(){
 
 function encrypt(message){
 	var encryptRSA = new JSEncrypt();
-  encryptRSA.setPublicKey(publickey);
-  var encrypted = encryptRSA.encrypt(message);
+  	encryptRSA.setPublicKey(publickey);
+ 	 var encrypted = encryptRSA.encrypt(message);
 	return encrypted;
 }
 
@@ -44,25 +44,32 @@ ws.onopen = function(event) {
   console.log("connected");
 };
 
+var bool_history = false;
 ws.onmessage = function(event) {
     var data = JSON.parse(decrypt(event.data));
-    console.log(data);
+
     switch(data.type){
     case "loginConfirmed":
         //TODO
         break;
     case "loginRefused":
         //TODO
-				console.log('Login Refused');
+		console.log('Login Refused');
         break;
     case "oldValue":
-        //TODO
+    	bool_history = true;
+        afficherCanvas(data.measure.light,data.measure.humidity,data.measure.temperature)
         break;
     case "currentValue":
-        //TODO
-        afficherCanvas(data.measure.light,data.measure.humidity,data.measure.temperature)
+    	if(!bool_history){
+    		afficherCanvas(data.measure.light,data.measure.humidity,data.measure.temperature)
+    	}
         break;
     default:
         console.log("unknown event : "+data.type);
     }
 };
+
+function requestHistory(date_value){
+	ws.send(encrypt(JSON.stringify({type:"history", date:date_value})))
+}
