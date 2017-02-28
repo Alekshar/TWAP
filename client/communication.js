@@ -38,7 +38,7 @@ function decrypt(message){
     return message;
 }
 
-var ws = new WebSocket("ws://" + window.location.host+":3000");
+var ws = new WebSocket("ws://localhost:3000");
 
 ws.onopen = function(event) {
   console.log("connected");

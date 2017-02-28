@@ -1,5 +1,21 @@
+function resizeCanvas(){
+	var canvas = document.getElementById("canvas");
+
+	var majWidth = window.innerWidth*0.8;
+	var majHeight = window.innerHeight*0.8;
+
+	if(majWidth > 600){
+		majWidth = 600;
+	}
+	if(majHeight > 600){
+		majHeight = 600;
+	}
+    canvas.width  = majWidth;
+    canvas.height = majHeight;
+}
+
 document.addEventListener("DOMContentLoaded", function(event) {
-	var canvas = document.getElementById('tutoriel');
+	var canvas = document.getElementById('canvas');
 	ctx = canvas.getContext('2d');
 
 	//Simulation du serveur

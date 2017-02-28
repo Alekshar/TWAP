@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>TamagOchIoT</title>
+	<title>TamagochIoT</title>
 	<link rel="stylesheet" type="text/css" href="styles.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<script type="text/javascript" src="crypto-js.js"></script>
 	<script type="text/javascript" src="affichage.js"></script>
 	<script type="text/javascript" src="https://cdn.rawgit.com/ricmoo/aes-js/e27b99df/index.js"></script>
@@ -11,24 +12,29 @@
 	<script type="text/javascript" src="communication.js"></script>
 <!-- 	<script type="text/javascript" src="history.js"></script> -->
 </head>
-<body>
-	<h1>TamagotchIoT</h1>
-	Get Key : <input type="file" id="fileInput">
-	<div>
-		<input id="login" type="text" placeholder="login"/>
-		<input id="password" type="password" placeholder="password"/>
-		<button onclick="tryLogin()">Log</button>
-	</div>
+<body onresize="resizeCanvas()">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-2"></div>
+			<div class="col-lg-8 col-md-12">
+				<div class="center-block"><h1>TamagotchIoT</h1></div>
+				<div>
+					<input id="login" type="text" placeholder="login"/>
+					<input id="password" type="password" placeholder="password"/>
+					<button onclick="tryLogin()">Log</button>
+				</div>
+				<div>
+					<canvas id="canvas" width="600" height="600">
 
-	<div>
-		<canvas id="tutoriel" width="600" height="600">
-
-		</canvas>
-	</div>
-
-	<div>
-		<input id="rangeHistory" type="range" min="0" max="288" value="288" oninput="history(this.value)" onchange="requestHistory(this.value)"/>
-		<p id="rangeText">Current date</p>
+					</canvas>
+				</div>
+				<div>
+					<input id="rangeHistory" type="range" min="0" max="288" value="288" oninput="history(this.value)" onchange="requestHistory(this.value)"/>
+					<p id="rangeText">Current date</p>
+				</div>
+			</div>
+			<div class="col-lg-2"></div>
+		</div>
 	</div>
 </body>
 </html>
