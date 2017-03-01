@@ -80,7 +80,6 @@ function requestHistory(date_value){
 
 function history(value){
 	var d = new Date();
-	console.log(value)
 	var value = 288-value;
 
 	if(value!=0){
