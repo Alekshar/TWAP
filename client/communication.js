@@ -26,7 +26,7 @@ function encrypt(message){
 
 function decrypt(message){
     if(message.indexOf('<c>') == 0){
-      key = key.substring(0,16);
+      key = key.substring(0,32);
       var arr = [];
       key.split("").forEach((d)=>{
         arr.push(d.charCodeAt(0));

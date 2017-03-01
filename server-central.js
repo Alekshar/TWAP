@@ -129,7 +129,7 @@ wss.on('connection', function(client) {
 
 function encrypt(message, key){
 
-  key = key.substring(0,16);
+  key = key.substring(0,32);
   var arr = [];
   key.split("").forEach((d)=>{
     arr.push(d.charCodeAt(0));
