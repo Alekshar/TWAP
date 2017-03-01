@@ -11,7 +11,10 @@ function tryLogin(){
     var password = document.querySelector("#password").value;
   	password = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
 		key = password;
-    ws.send(encrypt(JSON.stringify({type:"login", user:login, password:password})));
+
+	if(ws.readyState==1){
+    	ws.send(encrypt(JSON.stringify({type:"login", user:login, password:password})));
+    }
 }
 
 function encrypt(message){
@@ -70,7 +73,9 @@ ws.onmessage = function(event) {
 };
 
 function requestHistory(date_value){
-	ws.send(encrypt(JSON.stringify({type:"history", date:date_value})))
+	if(ws.readyState==1){
+		ws.send(encrypt(JSON.stringify({type:"history", date:date_value})))
+	}
 }
 
 function history(value){

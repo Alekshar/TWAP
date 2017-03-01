@@ -92,7 +92,8 @@ wss.on('connection', function(client) {
 			break;
 		case "history":// {date} -> oldValue
 		    getMeasureAtTime(data.date, function(measure){
-	            client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure}), client.key));
+		    	if(client.key!==undefined) //Ajout car sinon encrypt peut appeler substring de undefined et faire cracher l'appli
+	            	client.send(encrypt(JSON.stringify({type:"oldValue",measure:measure}), client.key));
 		    });
 		    break;
 		case "login":// {user,password} -> {type:"loginConfirmed"},
