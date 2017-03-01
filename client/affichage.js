@@ -34,8 +34,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 });
 
-var img = new Image();   // Crée un nouvel objet Image
-	img.src = 'images/Cartman.png'; // Définit le chemin vers sa source
+var imgCartman = new Image();   // Crée un nouvel objet Image
+	imgCartman.src = 'images/Cartman.png'; // Définit le chemin vers sa source
+
+var imgCartmanSoleil = new Image();   // Crée un nouvel objet Image
+	imgCartmanSoleil.src = 'images/Cartman_soleil.png'; // Définit le chemin vers sa source
+
+var imgCartmanFroid = new Image();   // Crée un nouvel objet Image
+	imgCartmanFroid.src = 'images/Cartman_froid.png'; // Définit le chemin vers sa source
+
+var imgCartmanPluie = new Image();   // Crée un nouvel objet Image
+	imgCartmanPluie.src = 'images/Cartman_pluie.png'; // Définit le chemin vers sa source
 
 var imgPluie = new Image();   // Crée un nouvel objet Image
 	imgPluie.src = 'images/Pluie.png';
@@ -45,6 +54,9 @@ var imgNeige = new Image();   // Crée un nouvel objet Image
 
 var imgNuage = new Image();   // Crée un nouvel objet Image
 	imgNuage.src = 'images/Nuage.png';
+
+var imgNuageSombre = new Image();   // Crée un nouvel objet Image
+	imgNuageSombre.src = 'images/Nuage_sombre.png';
 
 var HAUTEUR_CIEL = 50;
 var HAUTEUR_MIDDLE = 400;
@@ -60,7 +72,7 @@ function afficherCanvas(L, H, T){
 
 	//Sol
 	ctx.fillRect (0, 0, 600, 450);
-	if(T<0){
+	if(T>0){
 		ctx.fillStyle = GREEN;
 	}else{
 		ctx.fillStyle = WHITE;
@@ -69,18 +81,32 @@ function afficherCanvas(L, H, T){
 
 	//Pluie/Neige
 	if(H>50){
-		if(T<0){
+		if(T>0){
 			ctx.drawImage(imgPluie, 0, HAUTEUR_CIEL, 600, 400);
 		}else{
-			ctx.drawImage(imgNeige, 0, HAUTEUR_CIEL, 600, 400);
+			ctx.drawImage(imgNeige, 0, HAUTEUR_CIEL+50, 600, 400-50);
 		}
 	}
 
-	//Personnage
+	
+
+	var img = imgCartman;
+	if(T > 20 && L > 200 && H <50){
+		img = imgCartmanSoleil
+	}else if(H>50 && T>0){
+		img = imgCartmanPluie
+	}else if(T < 0){
+		img = imgCartmanFroid
+	}
+
 	ctx.drawImage(img, 200, 600-HAUTEUR_SOL-183)
 
+	var nuage = imgNuage;
 	//Nuage
-	/*ctx.drawImage(imgNuage, 20, 0);
-	ctx.drawImage(imgNuage, 190, 13);
-	ctx.drawImage(imgNuage, 380, 10);*/
+	if(L<125){
+		nuage = imgNuageSombre;
+	}
+	ctx.drawImage(nuage, 0, -10)
+	ctx.drawImage(nuage, 120, 15)
+	ctx.drawImage(nuage, 330, 0)
 }

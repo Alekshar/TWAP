@@ -57,7 +57,6 @@ ws.onmessage = function(event) {
 		console.log('Login Refused');
         break;
     case "oldValue":
-    	bool_history = true;
         afficherCanvas(data.measure.light,data.measure.humidity,data.measure.temperature)
         break;
     case "currentValue":
@@ -72,4 +71,28 @@ ws.onmessage = function(event) {
 
 function requestHistory(date_value){
 	ws.send(encrypt(JSON.stringify({type:"history", date:date_value})))
+}
+
+function history(value){
+	var d = new Date();
+	console.log(value)
+	var value = 288-value;
+
+	if(value!=0){
+		var interval_minute = 5;
+		d = new Date(d.getTime()-value * interval_minute * 60 * 1000)
+
+		document.getElementById("rangeText").innerHTML = d.toString();
+
+		requestHistory(d)
+	}
+}
+
+function setBoolHistory(value){
+	if(value == 288){
+		bool_history = false;
+		document.getElementById("rangeText").innerHTML = "Current date"
+	}else{
+		bool_history = true;
+	}
 }
