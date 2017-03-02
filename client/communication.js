@@ -47,17 +47,17 @@ ws.onopen = function(event) {
   console.log("connected");
 };
 
-var bool_history = false;
 ws.onmessage = function(event) {
     var data = JSON.parse(decrypt(event.data));
 
     switch(data.type){
     case "loginConfirmed":
-        //TODO
+        $.notify("Access granted", "success");
+        document.getElementById("rangeHistory").value = 288;
+        bool_history = false;
         break;
     case "loginRefused":
-        //TODO
-		console.log('Login Refused');
+        $.notify("Access denied", "error");
         break;
     case "oldValue":
         afficherCanvas(data.measure.light,data.measure.humidity,data.measure.temperature)
