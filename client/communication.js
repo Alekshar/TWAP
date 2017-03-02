@@ -54,6 +54,7 @@ ws.onmessage = function(event) {
     case "loginConfirmed":
         $.notify("Access granted", "success");
         document.getElementById("rangeHistory").value = 288;
+        document.getElementById("rangeText").innerHTML = "Current date"
         bool_history = false;
         break;
     case "loginRefused":
@@ -83,8 +84,8 @@ function history(value){
 	var value = 288-value;
 
 	if(value!=0){
-		var interval_minute = 5;
-		d = new Date(d.getTime()-value * interval_minute * 60 * 1000)
+		var interval_seconde = 1;
+		d = new Date(d.getTime()-value * interval_seconde * 1000)
 
 		document.getElementById("rangeText").innerHTML = d.toString();
 
